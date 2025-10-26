@@ -1,0 +1,77 @@
+{
+  "name": "農產品交易資料分析系統",
+  "short_name": "農產分析",
+  "description": "快速查詢與分析農產品價格趨勢，協助您做出更好的交易決策",
+  "version": "3.0.0",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#6750A4",
+  "background_color": "#FEF7FF",
+  "scope": "/",
+  "lang": "zh-TW",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "finance"],
+  "screenshots": [
+    {
+      "src": "WEB/image/png/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "icons": [
+    {
+      "src": "WEB/image/png/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "WEB/image/png/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "WEB/image/png/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "features": [
+    "cross-platform",
+    "low-latency",
+    "offline-fallback"
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "價格趨勢分析",
+      "short_name": "價格趨勢",
+      "description": "快速查看農產品價格趨勢圖表",
+      "url": "/?view=trend",
+      "icons": [
+        {
+          "src": "WEB/image/png/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "市場交易量分析",
+      "short_name": "交易量",
+      "description": "查看各市場交易量分布",
+      "url": "/?view=volume",
+      "icons": [
+        {
+          "src": "WEB/image/png/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}

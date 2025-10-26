@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>農產品交易資料分析系統 V3.0.0</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6750A4">
+    <meta name="description" content="快速查詢與分析農產品價格趨勢，協助您做出更好的交易決策">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="農產分析">
+    <link rel="apple-touch-icon" href="WEB/image/png/icon-192.png">
+    <link rel="icon" type="image/png" href="WEB/image/png/icon-192.png">
+    <link rel="icon" type="image/x-icon" href="WEB/image/png/favicon.ico">
+    <!-- Material Design 3 Color Tokens -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <header class="app-bar">
+            <div class="app-bar-content">
+                <h1 class="app-title">農產品交易分析</h1>
+                <div class="version-chip">
+                    <span class="version-text">V3.0.0</span>
+                    <span class="update-date">2025/10/26</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Control Section -->
+            <section class="control-section">
+                <div class="section-card">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">search</span>
+                        <h2>作物選擇</h2>
+                    </div>
+                    
+                    <!-- Search Input -->
+                    <div class="input-field">
+                        <div class="text-field">
+                            <input type="text" id="searchInput" placeholder="搜尋作物...">
+                            <span class="material-symbols-outlined">search</span>
+                        </div>
+                    </div>
+
+                    <!-- Market Filter -->
+                    <div class="input-field">
+                        <div class="select-field">
+                            <select id="marketSelect">
+                                <option value="">所有市場</option>
+                            </select>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </div>
+                    </div>
+
+                    <!-- Crop Selection -->
+                    <div class="input-field">
+                        <div class="select-field">
+                            <select id="cropSelect">
+                                <option value="">請選擇作物</option>
+                            </select>
+                            <span class="material-symbols-outlined">expand_more</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Tools -->
+                <div class="section-card">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">analytics</span>
+                        <h2>分析工具</h2>
+                    </div>
+                    
+                    <div class="analysis-grid">
+                        <button id="showPriceTrend" class="analysis-btn primary">
+                            <span class="material-symbols-outlined">trending_up</span>
+                            <span>價格趨勢</span>
+                        </button>
+                        <button id="showVolumeDist" class="analysis-btn secondary">
+                            <span class="material-symbols-outlined">bar_chart</span>
+                            <span>交易量分布</span>
+                        </button>
+                        <button id="showPriceDist" class="analysis-btn secondary">
+                            <span class="material-symbols-outlined">histogram</span>
+                            <span>價格分布</span>
+                        </button>
+                        <button id="showSeasonal" class="analysis-btn secondary">
+                            <span class="material-symbols-outlined">calendar_month</span>
+                            <span>季節性分析</span>
+                        </button>
+                        <button id="showPricePrediction" class="analysis-btn tertiary">
+                            <span class="material-symbols-outlined">psychology</span>
+                            <span>價格預測</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Export Tools -->
+                <div class="section-card">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">download</span>
+                        <h2>資料匯出 (尚未完工)</h2>
+                    </div>
+                    
+                    <div class="export-grid">
+                        <button id="exportExcel" class="export-btn">
+                            <span class="material-symbols-outlined">table_view</span>
+                            <span>Excel</span>
+                        </button>
+                        <button id="exportCSV" class="export-btn">
+                            <span class="material-symbols-outlined">description</span>
+                            <span>CSV</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Display Section -->
+            <section class="display-section">
+                <!-- Loading State -->
+                <div id="loadingIndicator" class="loading-container" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <p class="loading-text">資料載入中...</p>
+                </div>
+
+                <!-- Chart Area -->
+                <div class="section-card chart-container">
+                    <div id="chartArea" class="chart-area">
+                        <div class="empty-state">
+                            <span class="material-symbols-outlined">show_chart</span>
+                            <h3>開始分析</h3>
+                            <p>請選擇作物以查看分析結果</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-container">
+                    <div class="stats-header">
+                        <span class="material-symbols-outlined">monitoring</span>
+                        <h3>統計資料</h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card" id="avgPriceCard">
+                            <div class="stat-icon">
+                                <span class="material-symbols-outlined">trending_flat</span>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-label">平均價格</div>
+                                <div class="stat-value" id="avgPrice">--</div>
+                                <div class="stat-unit">元/公斤</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card" id="minPriceCard">
+                            <div class="stat-icon low">
+                                <span class="material-symbols-outlined">trending_down</span>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-label">最低價格</div>
+                                <div class="stat-value" id="minPrice">--</div>
+                                <div class="stat-unit">元/公斤</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card" id="maxPriceCard">
+                            <div class="stat-icon high">
+                                <span class="material-symbols-outlined">trending_up</span>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-label">最高價格</div>
+                                <div class="stat-value" id="maxPrice">--</div>
+                                <div class="stat-unit">元/公斤</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card" id="totalVolumeCard">
+                            <div class="stat-icon">
+                                <span class="material-symbols-outlined">scale</span>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-label">總交易量</div>
+                                <div class="stat-value" id="totalVolume">--</div>
+                                <div class="stat-unit">公斤</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Table -->
+                <div class="section-card table-container">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">table_rows</span>
+                        <h3>詳細資料</h3>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>市場</th>
+                                    <th>價格</th>
+                                    <th>交易量</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dataTableBody">
+                                <tr class="empty-row">
+                                    <td colspan="4">請選擇作物查看詳細資料</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Analysis Result -->
+                <div id="resultArea" class="section-card result-container" style="display: none;">
+                    <div class="card-header">
+                        <span class="material-symbols-outlined">insights</span>
+                        <h3>分析結果</h3>
+                    </div>
+                    <div class="result-content">
+                        <!-- 分析結果將在這裡顯示 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <p class="data-source">資料來源：行政院農業委員會農產品交易行情站</p>
+                <p class="update-time">最後更新：<span id="dataUpdateTime">載入中...</span></p>
+                <p class="copyright">© 2025 農產品交易分析系統 | VNAos團隊製作</p>
+            </div>
+        </footer>
+
+        <!-- FAB for refresh -->
+        <button id="refreshFab" class="fab" title="重新整理資料">
+            <span class="material-symbols-outlined">refresh</span>
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
