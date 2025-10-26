@@ -1,5 +1,6 @@
 # 農產品交易資料分析系統 V3.0.0
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/Yo-codeback/bva-web)
 ## 概述
 
 這是一個基於 Web 的農產品交易資料分析系統，採用 Material Design 3 設計語言，提供現代化、直觀的使用者介面。系統可以幫助使用者快速查詢和分析農產品價格趨勢，做出更好的交易決策。
