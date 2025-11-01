@@ -94,6 +94,30 @@ async function fetchNotification() {
             }
         }
         
+        // 檢查時間是否還在有效期內
+        // 如果有設定 endTime，檢查是否已經過了
+        if (notification.endTime) {
+            const endTime = new Date(notification.endTime);
+            const now = new Date();
+            if (now > endTime) {
+                console.log('通知已經過期');
+                return null;
+            }
+        }
+        
+        // 如果有設定 startTime，提前通知使用者（現在就顯示，不用等到開始時間）
+        if (notification.startTime) {
+            const startTime = new Date(notification.startTime);
+            const now = new Date();
+            
+            // 如果是維護通知，提前告知使用者
+            if (now < startTime) {
+                console.log('檢測到即將到來的維護通知，提前告知使用者');
+                // 標記這是提前通知，在顯示時會特別處理
+                notification.isUpcoming = true;
+            }
+        }
+        
         return notification;
     } catch (error) {
         console.warn('獲取通知失敗:', error);
@@ -107,7 +131,27 @@ function showNotification(notification) {
     
     // 設定標題和訊息
     notificationTitle.textContent = notification.title || '系統通知';
-    notificationMessage.textContent = notification.message || '';
+    
+    // 如果是提前通知，調整訊息顯示
+    if (notification.isUpcoming) {
+        const currentTime = new Date();
+        const startTime = new Date(notification.startTime);
+        const hoursUntilStart = Math.floor((startTime - currentTime) / (1000 * 60 * 60));
+        const minutesUntilStart = Math.floor((startTime - currentTime) / (1000 * 60));
+        
+        let timeUntilMessage = '';
+        if (hoursUntilStart > 0) {
+            timeUntilMessage = `約 ${hoursUntilStart} 小時後開始`;
+        } else if (minutesUntilStart > 0) {
+            timeUntilMessage = `約 ${minutesUntilStart} 分鐘後開始`;
+        } else {
+            timeUntilMessage = '即將開始';
+        }
+        
+        notificationMessage.textContent = `⚠️ 預告：${timeUntilMessage}\n\n${notification.message}`;
+    } else {
+        notificationMessage.textContent = notification.message || '';
+    }
     
     // 顯示時間範圍（如果有）
     if (notification.startTime && notification.endTime) {

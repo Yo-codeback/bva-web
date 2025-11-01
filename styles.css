@@ -782,6 +782,7 @@ body {
   color: var(--md-sys-color-on-surface);
   line-height: 1.6;
   margin: 0 0 var(--spacing-md) 0;
+  white-space: pre-line;
 }
 
 .notification-time {
