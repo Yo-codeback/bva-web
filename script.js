@@ -84,8 +84,8 @@ async function fetchNotification() {
         const data = await response.json();
         console.log('收到系統通知資料:', data);
         
-        // 檢查是否有通知列表
-        if (!data.notifications || !Array.isArray(data.notifications) || data.notifications.length === 0) {
+        // 檢查 count 是否為 0 或不存在通知列表
+        if (data.count === 0 || !data.notifications || !Array.isArray(data.notifications) || data.notifications.length === 0) {
             console.log('沒有通知');
             return null;
         }
