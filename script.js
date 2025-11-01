@@ -83,6 +83,17 @@ async function fetchNotification() {
         
         const notification = await response.json();
         console.log('收到系統通知:', notification);
+        
+        // 檢查是否針對主要資料 API 的通知
+        // 如果 targetAPIs 包含 "main"，或者沒有指定 targetAPIs，則顯示通知
+        if (notification.targetAPIs && Array.isArray(notification.targetAPIs)) {
+            const shouldShow = notification.targetAPIs.includes('main');
+            if (!shouldShow) {
+                console.log('通知不適用於主要資料 API');
+                return null;
+            }
+        }
+        
         return notification;
     } catch (error) {
         console.warn('獲取通知失敗:', error);
