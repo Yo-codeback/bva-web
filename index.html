@@ -247,6 +247,26 @@
         <button id="refreshFab" class="fab" title="重新整理資料">
             <span class="material-symbols-outlined">refresh</span>
         </button>
+
+        <!-- Notification Modal -->
+        <div id="notificationModal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="material-symbols-outlined">campaign</span>
+                    <h3 id="notificationTitle">系統通知</h3>
+                </div>
+                <div class="modal-body">
+                    <p id="notificationMessage">訊息內容</p>
+                    <div class="notification-time" id="notificationTime" style="display: none;">
+                        <span class="material-symbols-outlined">schedule</span>
+                        <span id="notificationTimeText"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="closeNotification" class="btn-primary">我知道了</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>

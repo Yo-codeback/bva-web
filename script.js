@@ -38,6 +38,14 @@ const minPriceElement = document.getElementById('minPrice');
 const maxPriceElement = document.getElementById('maxPrice');
 const totalVolumeElement = document.getElementById('totalVolume');
 
+// 通知彈窗相關元素
+const notificationModal = document.getElementById('notificationModal');
+const notificationTitle = document.getElementById('notificationTitle');
+const notificationMessage = document.getElementById('notificationMessage');
+const notificationTime = document.getElementById('notificationTime');
+const notificationTimeText = document.getElementById('notificationTimeText');
+const closeNotificationBtn = document.getElementById('closeNotification');
+
 // 資料相關變數
 let cropData = [];
 let marketData = [];
@@ -62,6 +70,65 @@ function convertROCToAD(rocDateStr) {
     return rocDateStr;
 }
 
+// 獲取通知資料
+async function fetchNotification() {
+    try {
+        console.log('檢查系統通知...');
+        const response = await fetch(`${API_BASE_URL}/notify`);
+        
+        if (!response.ok) {
+            console.log('沒有系統通知或 API 不可用');
+            return null;
+        }
+        
+        const notification = await response.json();
+        console.log('收到系統通知:', notification);
+        return notification;
+    } catch (error) {
+        console.warn('獲取通知失敗:', error);
+        return null;
+    }
+}
+
+// 顯示通知彈窗
+function showNotification(notification) {
+    if (!notification) return;
+    
+    // 設定標題和訊息
+    notificationTitle.textContent = notification.title || '系統通知';
+    notificationMessage.textContent = notification.message || '';
+    
+    // 顯示時間範圍（如果有）
+    if (notification.startTime && notification.endTime) {
+        const startTime = new Date(notification.startTime).toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        const endTime = new Date(notification.endTime).toLocaleString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        notificationTimeText.textContent = `${startTime} ~ ${endTime}`;
+        notificationTime.style.display = 'flex';
+    } else {
+        notificationTime.style.display = 'none';
+    }
+    
+    // 顯示彈窗
+    notificationModal.style.display = 'flex';
+}
+
+// 關閉通知彈窗
+function closeNotification() {
+    notificationModal.style.display = 'none';
+}
+
 // 初始化應用程式
 async function initializeApp() {
     console.log('初始化應用程式...');
@@ -82,6 +149,15 @@ async function initializeApp() {
         updateLastUpdateTime();
         
         console.log('應用程式初始化完成');
+        
+        // 檢查並顯示通知
+        const notification = await fetchNotification();
+        if (notification) {
+            // 延遲一下再顯示，讓主畫面先載入完成
+            setTimeout(() => {
+                showNotification(notification);
+            }, 500);
+        }
     } catch (error) {
         console.error('初始化失敗:', error);
         showError('應用程式初始化失敗，請重新整理頁面');
@@ -917,6 +993,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     document.getElementById('totalVolumeCard').addEventListener('click', showVolumeDistribution);
+    
+    // 關閉通知按鈕
+    closeNotificationBtn.addEventListener('click', closeNotification);
+    
+    // 點擊背景關閉通知
+    notificationModal.addEventListener('click', (e) => {
+        if (e.target === notificationModal) {
+            closeNotification();
+        }
+    });
     
     // 初始化應用程式
     initializeApp();
