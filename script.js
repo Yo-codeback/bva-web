@@ -148,7 +148,7 @@ function showNotification(notification) {
             timeUntilMessage = '即將開始';
         }
         
-        notificationMessage.textContent = `⚠️ 預告：${timeUntilMessage}\n\n${notification.message}`;
+        notificationMessage.textContent = `⚠️ 預告：${timeUntilMessage}\n\n${notification.message || ''}`;
     } else {
         notificationMessage.textContent = notification.message || '';
     }
