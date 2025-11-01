@@ -81,28 +81,45 @@ async function fetchNotification() {
             return null;
         }
         
-        const notification = await response.json();
-        console.log('收到系統通知:', notification);
+        const data = await response.json();
+        console.log('收到系統通知資料:', data);
         
-        // 檢查是否針對主要資料 API 的通知
-        // 如果 targetAPIs 包含 "main"，或者沒有指定 targetAPIs，則顯示通知
-        if (notification.targetAPIs && Array.isArray(notification.targetAPIs)) {
-            const shouldShow = notification.targetAPIs.includes('main');
-            if (!shouldShow) {
-                console.log('通知不適用於主要資料 API');
-                return null;
-            }
+        // 檢查是否有通知列表
+        if (!data.notifications || !Array.isArray(data.notifications) || data.notifications.length === 0) {
+            console.log('沒有通知');
+            return null;
         }
         
-        // 檢查時間是否還在有效期內
-        // 如果有設定 endTime，檢查是否已經過了
-        if (notification.endTime) {
-            const endTime = new Date(notification.endTime);
-            const now = new Date();
-            if (now > endTime) {
-                console.log('通知已經過期');
-                return null;
+        // 找到第一個適用於 main API 的通知
+        let notification = null;
+        for (const notif of data.notifications) {
+            // 檢查是否針對主要資料 API 的通知
+            if (notif.targetAPIs && Array.isArray(notif.targetAPIs)) {
+                const shouldShow = notif.targetAPIs.includes('main');
+                if (!shouldShow) {
+                    console.log('通知不適用於主要資料 API:', notif.title);
+                    continue;
+                }
             }
+            
+            // 檢查時間是否還在有效期內
+            if (notif.endTime) {
+                const endTime = new Date(notif.endTime);
+                const now = new Date();
+                if (now > endTime) {
+                    console.log('通知已經過期:', notif.title);
+                    continue;
+                }
+            }
+            
+            // 找到適用的通知
+            notification = notif;
+            break;
+        }
+        
+        if (!notification) {
+            console.log('沒有適用的通知');
+            return null;
         }
         
         // 如果有設定 startTime，提前通知使用者（現在就顯示，不用等到開始時間）
