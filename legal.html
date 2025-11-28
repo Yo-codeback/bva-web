@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>法律文件</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it@13.0.1/dist/markdown-it.min.js"></script>
+    <meta name="theme-color" content="#6750A4">
+    <style>
+        /* Legal Page Specific Styles */
+        .legal-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        .legal-header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--md-sys-color-outline-variant);
+        }
+
+        .legal-header h1 {
+            font: var(--md-sys-typescale-headline-large);
+            color: var(--md-sys-color-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .legal-header p {
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .tab-container {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--md-sys-color-outline-variant);
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font: var(--md-sys-typescale-title-medium);
+            color: var(--md-sys-color-on-surface-variant);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .tab-button:hover {
+            color: var(--md-sys-color-primary);
+            background-color: var(--md-sys-color-primary-container);
+        }
+
+        .tab-button.active {
+            color: var(--md-sys-color-primary);
+            border-bottom-color: var(--md-sys-color-primary);
+            font-weight: 500;
+        }
+
+        .content-container {
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: var(--md-sys-shape-corner-large);
+            padding: var(--spacing-xl);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            min-height: 400px;
+        }
+
+        .content-container.loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--md-sys-color-outline-variant);
+            border-top-color: var(--md-sys-color-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font: var(--md-sys-typescale-body-medium);
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        .error-message {
+            background-color: var(--md-sys-color-error-container);
+            color: var(--md-sys-color-on-error-container);
+            padding: var(--spacing-lg);
+            border-radius: var(--md-sys-shape-corner-medium);
+            margin-bottom: var(--spacing-md);
+        }
+
+        /* Markdown Content Styles */
+        .markdown-content {
+            font: var(--md-sys-typescale-body-large);
+            line-height: 1.8;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .markdown-content h1 {
+            font: var(--md-sys-typescale-headline-large);
+            color: var(--md-sys-color-primary);
+            margin-top: var(--spacing-xxl);
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 2px solid var(--md-sys-color-outline-variant);
+        }
+
+        .markdown-content h2 {
+            font: var(--md-sys-typescale-headline-medium);
+            color: var(--md-sys-color-on-surface);
+            margin-top: var(--spacing-xl);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .markdown-content h3 {
+            font: var(--md-sys-typescale-title-large);
+            color: var(--md-sys-color-on-surface);
+            margin-top: var(--spacing-lg);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .markdown-content h4 {
+            font: var(--md-sys-typescale-title-medium);
+            color: var(--md-sys-color-on-surface);
+            margin-top: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .markdown-content p {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .markdown-content ul,
+        .markdown-content ol {
+            margin-left: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .markdown-content li {
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .markdown-content a {
+            color: var(--md-sys-color-primary);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .markdown-content a:hover {
+            border-bottom-color: var(--md-sys-color-primary);
+        }
+
+        .markdown-content code {
+            background-color: var(--md-sys-color-surface-variant);
+            padding: 2px 6px;
+            border-radius: var(--md-sys-shape-corner-small);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .markdown-content pre {
+            background-color: var(--md-sys-color-surface-variant);
+            padding: var(--spacing-md);
+            border-radius: var(--md-sys-shape-corner-medium);
+            overflow-x: auto;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .markdown-content pre code {
+            background: none;
+            padding: 0;
+        }
+
+        .markdown-content blockquote {
+            border-left: 4px solid var(--md-sys-color-primary);
+            padding-left: var(--spacing-md);
+            margin-left: 0;
+            margin-bottom: var(--spacing-md);
+            color: var(--md-sys-color-on-surface-variant);
+            font-style: italic;
+        }
+
+        .markdown-content hr {
+            border: none;
+            border-top: 2px solid var(--md-sys-color-outline-variant);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .markdown-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .markdown-content table th,
+        .markdown-content table td {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid var(--md-sys-color-outline-variant);
+        }
+
+        .markdown-content table th {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            font-weight: 500;
+        }
+
+        .markdown-content strong {
+            font-weight: 500;
+            color: #FFC107; /* 黃色字體 */
+        }
+
+        .markdown-content em {
+            font-style: italic;
+        }
+
+        /* Custom label styles */
+        .markdown-content .lable {
+            display: inline-block;
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--md-sys-shape-corner-small);
+            font: var(--md-sys-typescale-label-medium);
+            font-weight: 500;
+        }
+
+        .markdown-content .lable.info {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        /* Container styles (:::default, :::primary, :::info, :::succes, :::warning, :::danger) */
+        .markdown-content .markdown-container {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--md-sys-shape-corner-medium);
+            margin: var(--spacing-lg) 0;
+            border-left: 4px solid;
+        }
+
+        /* Default container */
+        .markdown-content .markdown-default {
+            background-color: var(--md-sys-color-surface-variant);
+            color: var(--md-sys-color-on-surface-variant);
+            border-left-color: var(--md-sys-color-outline);
+        }
+
+        /* Primary container */
+        .markdown-content .markdown-primary {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            border-left-color: var(--md-sys-color-primary);
+        }
+
+        .markdown-content .markdown-primary::before {
+            content: "ℹ️ ";
+            font-weight: 500;
+        }
+
+        /* Info container */
+        .markdown-content .markdown-info {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            border-left-color: var(--md-sys-color-primary);
+        }
+
+        .markdown-content .markdown-info::before {
+            content: "ℹ️ ";
+            font-weight: 500;
+        }
+
+        /* Success container (note: spelling is "succes" not "success") */
+        .markdown-content .markdown-succes {
+            background-color: var(--md-sys-color-success-container);
+            color: var(--md-sys-color-on-surface);
+            border-left-color: var(--md-sys-color-success);
+        }
+
+        .markdown-content .markdown-succes::before {
+            content: "✅ ";
+            font-weight: 500;
+        }
+
+        /* Warning container */
+        .markdown-content .markdown-warning {
+            background-color: var(--md-sys-color-warning-container);
+            color: var(--md-sys-color-on-surface);
+            border-left-color: var(--md-sys-color-warning);
+        }
+
+        .markdown-content .markdown-warning::before {
+            content: "⚠️ ";
+            font-weight: 500;
+        }
+
+        /* Danger container */
+        .markdown-content .markdown-danger {
+            background-color: var(--md-sys-color-error-container);
+            color: var(--md-sys-color-on-error-container);
+            border-left-color: var(--md-sys-color-error);
+        }
+
+        .markdown-content .markdown-danger::before {
+            content: "❌ ";
+            font-weight: 500;
+        }
+
+        .refresh-button {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+
+        .refresh-button:hover {
+            background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, black);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .refresh-button:active {
+            transform: scale(0.95);
+        }
+
+        .refresh-button .material-symbols-outlined {
+            font-size: 24px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            background-color: var(--md-sys-color-surface-container);
+            color: var(--md-sys-color-primary);
+            text-decoration: none;
+            border-radius: var(--md-sys-shape-corner-medium);
+            font: var(--md-sys-typescale-label-large);
+            margin-bottom: var(--spacing-lg);
+            transition: background-color 0.2s ease;
+        }
+
+        .back-button:hover {
+            background-color: var(--md-sys-color-primary-container);
+        }
+
+        .last-updated {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid var(--md-sys-color-outline-variant);
+            font: var(--md-sys-typescale-body-small);
+            color: var(--md-sys-color-on-surface-variant);
+        }
+
+        @media (max-width: 768px) {
+            .legal-container {
+                padding: var(--spacing-md);
+            }
+
+            .content-container {
+                padding: var(--spacing-md);
+            }
+
+            .tab-container {
+                gap: var(--spacing-xs);
+            }
+
+            .tab-button {
+                padding: var(--spacing-sm) var(--spacing-md);
+                font-size: 14px;
+            }
+
+            .refresh-button {
+                bottom: var(--spacing-md);
+                right: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <header class="app-bar">
+            <div class="app-bar-content">
+                <h1 class="app-title">法律文件</h1>
+                <div class="version-chip">
+                    <a href="index.html" style="text-decoration: none; color: var(--md-sys-color-primary);">
+                        <span class="material-symbols-outlined">home</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="legal-container">
+            <a href="index.html" class="back-button">
+                <span class="material-symbols-outlined">arrow_back</span>
+                返回首頁
+            </a>
+
+            <div class="legal-header">
+                <h1>法律文件</h1>
+                <p>請選擇要查看的條款文件</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-container">
+                <button class="tab-button active" data-tab="terms">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">description</span>
+                    服務條款
+                </button>
+                <button class="tab-button" data-tab="privacy">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">privacy_tip</span>
+                    隱私權政策
+                </button>
+                <button class="tab-button" data-tab="license">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 4px;">gavel</span>
+                    授權條款
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-container" id="contentContainer">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">載入中...</p>
+            </div>
+
+            <div class="last-updated" id="lastUpdated">
+                最後更新時間：載入中...
+            </div>
+        </main>
+
+        <!-- Refresh Button -->
+        <button class="refresh-button" id="refreshButton" title="重新載入內容">
+            <span class="material-symbols-outlined">refresh</span>
+        </button>
+    </div>
+
+    <script>
+        // Configuration
+        const config = {
+            termsFile: '服務條款.md',
+            privacyFile: '隱私權政策.md',
+            licenseFile: 'LICENCE',
+            cacheBuster: true // Add timestamp to prevent caching
+        };
+
+        // Initialize markdown-it (declared globally)
+        let md = null;
+
+        // State
+        let currentTab = 'terms';
+        let termsContent = null;
+        let privacyContent = null;
+        let licenseContent = null;
+        let termsLastModified = null;
+        let privacyLastModified = null;
+        let licenseLastModified = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize markdown-it first
+            if (typeof markdownit !== 'undefined') {
+                md = markdownit({
+                    html: true,
+                    breaks: true,
+                    linkify: true,
+                    typographer: true
+                });
+            }
+            
+            initializeTabs();
+            loadContent('terms');
+        });
+
+        // Tab switching
+        function initializeTabs() {
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tab = button.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update active tab
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+
+            // Load content
+            loadContent(tab);
+        }
+
+        // Load markdown content
+        async function loadContent(tab, forceRefresh = false) {
+            const container = document.getElementById('contentContainer');
+            let fileName;
+            if (tab === 'terms') {
+                fileName = config.termsFile;
+            } else if (tab === 'privacy') {
+                fileName = config.privacyFile;
+            } else if (tab === 'license') {
+                fileName = config.licenseFile;
+            }
+            
+            // Show loading state
+            container.className = 'content-container loading';
+            container.innerHTML = `
+                <div class="loading-spinner"></div>
+                <p class="loading-text">載入中...</p>
+            `;
+
+            try {
+                // Check if we have cached content and if we should use it
+                let cachedContent;
+                if (tab === 'terms') {
+                    cachedContent = termsContent;
+                } else if (tab === 'privacy') {
+                    cachedContent = privacyContent;
+                } else if (tab === 'license') {
+                    cachedContent = licenseContent;
+                }
+                
+                if (!forceRefresh && cachedContent) {
+                    displayContent(cachedContent);
+                    updateLastModified(tab);
+                    return;
+                }
+
+                // Fetch markdown file
+                const url = config.cacheBuster 
+                    ? `${fileName}?t=${Date.now()}` 
+                    : fileName;
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`無法載入檔案: ${response.status} ${response.statusText}`);
+                }
+
+                const markdown = await response.text();
+                const html = parseMarkdown(markdown);
+
+                // Cache content
+                if (tab === 'terms') {
+                    termsContent = html;
+                    termsLastModified = new Date(response.headers.get('Last-Modified') || Date.now());
+                } else if (tab === 'privacy') {
+                    privacyContent = html;
+                    privacyLastModified = new Date(response.headers.get('Last-Modified') || Date.now());
+                } else if (tab === 'license') {
+                    licenseContent = html;
+                    licenseLastModified = new Date(response.headers.get('Last-Modified') || Date.now());
+                }
+
+                displayContent(html);
+                updateLastModified(tab);
+
+            } catch (error) {
+                console.error('Error loading content:', error);
+                container.className = 'content-container';
+                container.innerHTML = `
+                    <div class="error-message">
+                        <strong>載入錯誤</strong><br>
+                        ${error.message}<br>
+                        <small>請檢查檔案是否存在，或稍後再試。</small>
+                    </div>
+                `;
+            }
+        }
+
+        // Display content
+        function displayContent(html) {
+            const container = document.getElementById('contentContainer');
+            container.className = 'content-container';
+            container.innerHTML = `<div class="markdown-content">${html}</div>`;
+        }
+
+        // Update last modified time
+        function updateLastModified(tab) {
+            let lastModified;
+            if (tab === 'terms') {
+                lastModified = termsLastModified;
+            } else if (tab === 'privacy') {
+                lastModified = privacyLastModified;
+            } else if (tab === 'license') {
+                lastModified = licenseLastModified;
+            }
+            
+            const lastUpdatedEl = document.getElementById('lastUpdated');
+            
+            if (lastModified) {
+                const dateStr = lastModified.toLocaleString('zh-TW', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                lastUpdatedEl.textContent = `最後更新時間：${dateStr}`;
+            } else {
+                lastUpdatedEl.textContent = `最後更新時間：剛剛`;
+            }
+        }
+
+        // Refresh button
+        document.getElementById('refreshButton').addEventListener('click', () => {
+            // Clear cache
+            if (currentTab === 'terms') {
+                termsContent = null;
+            } else if (currentTab === 'privacy') {
+                privacyContent = null;
+            } else if (currentTab === 'license') {
+                licenseContent = null;
+            }
+            
+            // Reload with force refresh
+            loadContent(currentTab, true);
+            
+            // Add rotation animation
+            const icon = document.querySelector('#refreshButton .material-symbols-outlined');
+            icon.style.animation = 'spin 0.5s linear';
+            setTimeout(() => {
+                icon.style.animation = '';
+            }, 500);
+        });
+
+        // Parse markdown with custom processing
+        function parseMarkdown(markdown) {
+            if (!md) {
+                // Fallback if markdown-it is not loaded
+                return '<p>Markdown 解析器未載入</p>';
+            }
+
+            // Pre-process markdown to handle custom syntax
+            let processed = markdown;
+
+            // Handle [text]{.class1 .class2} syntax (standalone, not in links)
+            processed = processed.replace(/\[([^\]]+)\]\{([^}]+)\}/g, function(match, text, attrs) {
+                const classes = attrs.split('.').filter(c => c.trim()).map(c => c.trim());
+                const classStr = classes.length > 0 ? classes.join(' ') : '';
+                return `<span class="${classStr}">${text}</span>`;
+            });
+
+            // Handle container syntax :::type ... :::
+            // Supported types: default, primary, info, succes, warning, danger
+            const containerTypes = ['default', 'primary', 'info', 'succes', 'warning', 'danger'];
+            containerTypes.forEach(type => {
+                const regex = new RegExp(`:::${type}\\s*\\n?([\\s\\S]*?)\\n?:::`, 'g');
+                processed = processed.replace(regex, function(match, content) {
+                    return `<div class="markdown-container markdown-${type}">${md.render(content.trim())}</div>`;
+                });
+            });
+
+            // Render the processed markdown
+            return md.render(processed);
+        }
+    </script>
+</body>
+</html>
+
