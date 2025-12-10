@@ -8,7 +8,7 @@ const RELEASE_DATE = '2025/10/26';
 console.log(`農產品交易分析系統 ${VERSION} - ${RELEASE_DATE}`);
 
 // API 端點
-const API_BASE_URL = 'https://bvc-api.creeperdev.me';
+const API_BASE_URL = 'http://hk-a.nothingh.com:40004';
 
 // DOM 元素
 const searchInput = document.getElementById('searchInput');
