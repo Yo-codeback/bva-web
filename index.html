@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>農產品交易資料分析系統 V3.0.0</title>
-    <link rel="stylesheet" href="styles.css">
+    <!-- CSS 將由 device-detector.js 動態載入 -->
+    <script src="config.js"></script>
+    <script src="device-detector.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6750A4">
@@ -28,6 +30,10 @@
                 <div class="version-chip">
                     <span class="version-text">V3.0.0</span>
                     <span class="update-date">2025/10/26</span>
+                    <div class="platform-switcher-toggle" id="platformSwitcherToggle" style="cursor: pointer; padding: 4px 8px; border-radius: 4px; font-size: 12px; background: rgba(0,0,0,0.05); margin-top: 4px;">
+                        <span class="material-symbols-outlined" style="font-size: 16px; vertical-align: middle;">devices</span>
+                        <span id="currentPlatformText">平台</span>
+                    </div>
                     <a href="https://deepwiki.com/Yo-codeback/bva-web"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
                     <a href="http://hk-a.w.creeperdev.me:10012/">網站上下線狀態</a>
                 </div>
@@ -245,6 +251,13 @@
             </div>
         </footer>
 
+        <!-- Platform Switcher -->
+        <div id="platformSwitcher" class="platform-switcher" style="display: none;">
+            <button data-platform="ios">iOS</button>
+            <button data-platform="android">Android</button>
+            <button data-platform="other">其他</button>
+        </div>
+
         <!-- FAB for refresh -->
         <button id="refreshFab" class="fab" title="重新整理資料">
             <span class="material-symbols-outlined">refresh</span>
@@ -271,6 +284,84 @@
         </div>
     </div>
 
+    <!-- 根據環境載入開發者工具 -->
+    <script>
+        // 等待 config.js 載入完成
+        if (typeof CURRENT_CONFIG !== 'undefined' && CURRENT_CONFIG.enableDevTools) {
+            const devToolsScript = document.createElement('script');
+            devToolsScript.src = 'dev-tools.js';
+            document.head.appendChild(devToolsScript);
+        }
+    </script>
     <script src="script.js"></script>
+    <script>
+        // 平台切換器功能
+        document.addEventListener('DOMContentLoaded', () => {
+            const platformSwitcherToggle = document.getElementById('platformSwitcherToggle');
+            const platformSwitcher = document.getElementById('platformSwitcher');
+            const currentPlatformText = document.getElementById('currentPlatformText');
+            
+            // 更新當前平台顯示
+            function updatePlatformText() {
+                const currentPlatform = window.DeviceDetector?.getCurrentPlatform();
+                const platformNames = {
+                    'ios': 'iOS',
+                    'android': 'Android',
+                    'other': '其他'
+                };
+                if (currentPlatformText) {
+                    currentPlatformText.textContent = platformNames[currentPlatform] || '平台';
+                }
+                
+                // 更新按鈕狀態
+                if (platformSwitcher) {
+                    platformSwitcher.querySelectorAll('button').forEach(btn => {
+                        if (btn.dataset.platform === currentPlatform) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                }
+            }
+            
+            // 切換顯示/隱藏平台選擇器
+            if (platformSwitcherToggle) {
+                platformSwitcherToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (platformSwitcher) {
+                        platformSwitcher.style.display = platformSwitcher.style.display === 'none' ? 'flex' : 'none';
+                    }
+                });
+            }
+            
+            // 平台選擇按鈕事件
+            if (platformSwitcher) {
+                platformSwitcher.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const platform = btn.dataset.platform;
+                        if (window.DeviceDetector) {
+                            window.DeviceDetector.switchPlatform(platform);
+                            updatePlatformText();
+                            platformSwitcher.style.display = 'none';
+                        }
+                    });
+                });
+            }
+            
+            // 監聽平台變更事件
+            window.addEventListener('platformChanged', updatePlatformText);
+            
+            // 初始更新
+            setTimeout(updatePlatformText, 100);
+            
+            // 點擊外部關閉
+            document.addEventListener('click', (e) => {
+                if (platformSwitcher && !platformSwitcher.contains(e.target) && !platformSwitcherToggle.contains(e.target)) {
+                    platformSwitcher.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

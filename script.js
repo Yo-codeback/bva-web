@@ -7,8 +7,15 @@ const VERSION = 'V3.0.0';
 const RELEASE_DATE = '2025/10/26';
 console.log(`農產品交易分析系統 ${VERSION} - ${RELEASE_DATE}`);
 
-// API 端點
-const API_BASE_URL = 'http://hk-a.nothingh.com:40004';
+// API 端點 - 從 config.js 讀取
+// 如果 config.js 尚未載入，使用預設值
+let API_BASE_URL = 'http://hk-a.nothingh.com:40004';
+if (typeof CURRENT_CONFIG !== 'undefined' && CURRENT_CONFIG.apiBaseUrl) {
+  API_BASE_URL = CURRENT_CONFIG.apiBaseUrl;
+  console.log(`使用環境配置 API: ${API_BASE_URL}`);
+} else {
+  console.warn('config.js 未載入，使用預設 API 端點');
+}
 
 // DOM 元素
 const searchInput = document.getElementById('searchInput');
@@ -204,6 +211,16 @@ function closeNotification() {
 // 初始化應用程式
 async function initializeApp() {
     console.log('初始化應用程式...');
+    
+    // 檢查並初始化開發者工具
+    if (typeof CURRENT_CONFIG !== 'undefined' && CURRENT_CONFIG.enableDevTools) {
+        console.log('開發環境：開發者工具已啟用');
+        // 等待 dev-tools.js 載入完成
+        if (typeof window.DevTools !== 'undefined') {
+            // 開發者工具會在載入時自動初始化
+            console.log('開發者工具已就緒');
+        }
+    }
     
     // 顯示載入狀態
     showLoading(true);

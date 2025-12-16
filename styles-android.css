@@ -854,3 +854,255 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Developer Tools Styles */
+#dev-tools-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--md-sys-color-surface);
+  border-top: 2px solid var(--md-sys-color-primary);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', monospace;
+}
+
+.dev-tools-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-md);
+  background-color: var(--md-sys-color-primary-container);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.dev-tools-header h3 {
+  font: var(--md-sys-typescale-title-medium);
+  color: var(--md-sys-color-on-primary-container);
+  margin: 0;
+}
+
+.dev-tools-toggle-btn,
+.dev-tools-close-btn {
+  padding: var(--spacing-xs) var(--spacing-md);
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-small);
+  font: var(--md-sys-typescale-label-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dev-tools-toggle-btn:hover,
+.dev-tools-close-btn:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, black);
+}
+
+.dev-tools-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dev-tools-tabs {
+  display: flex;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background-color: var(--md-sys-color-surface-container);
+  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.dev-tab {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: transparent;
+  color: var(--md-sys-color-on-surface-variant);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-small);
+  font: var(--md-sys-typescale-label-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dev-tab:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.dev-tab.active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
+
+.dev-tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-md);
+  display: none;
+}
+
+.dev-tab-content.active {
+  display: block;
+}
+
+.dev-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.dev-section label {
+  display: block;
+  font: var(--md-sys-typescale-label-medium);
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: var(--spacing-xs);
+}
+
+.dev-input,
+.dev-select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: var(--md-sys-shape-corner-small);
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-body-medium);
+  margin-bottom: var(--spacing-sm);
+}
+
+.dev-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none;
+  border-radius: var(--md-sys-shape-corner-small);
+  font: var(--md-sys-typescale-label-medium);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: var(--spacing-xs);
+}
+
+.dev-btn:hover {
+  background-color: color-mix(in srgb, var(--md-sys-color-primary) 90%, black);
+}
+
+.dev-log {
+  max-height: 400px;
+  overflow-y: auto;
+  background-color: var(--md-sys-color-surface-container);
+  border-radius: var(--md-sys-shape-corner-small);
+  padding: var(--spacing-sm);
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.dev-log-item {
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  background-color: var(--md-sys-color-surface);
+  border-radius: var(--md-sys-shape-corner-small);
+  border-left: 3px solid var(--md-sys-color-outline-variant);
+}
+
+.dev-log-item.dev-log-error {
+  border-left-color: var(--md-sys-color-error);
+}
+
+.dev-log-item.dev-log-warn {
+  border-left-color: var(--md-sys-color-warning);
+}
+
+.dev-log-header {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.dev-log-method {
+  color: var(--md-sys-color-primary);
+  font-weight: 600;
+}
+
+.dev-log-url {
+  flex: 1;
+  color: var(--md-sys-color-on-surface);
+  word-break: break-all;
+}
+
+.dev-log-time {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 11px;
+}
+
+.dev-log-level {
+  color: var(--md-sys-color-error);
+  font-weight: 600;
+}
+
+.dev-log-details {
+  font-size: 11px;
+  color: var(--md-sys-color-on-surface-variant);
+  margin-top: var(--spacing-xs);
+}
+
+.dev-code {
+  background-color: var(--md-sys-color-surface-container-high);
+  padding: var(--spacing-md);
+  border-radius: var(--md-sys-shape-corner-small);
+  font-family: monospace;
+  font-size: 12px;
+  overflow-x: auto;
+  color: var(--md-sys-color-on-surface);
+}
+
+.dev-code-small {
+  font-size: 11px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dev-empty {
+  text-align: center;
+  color: var(--md-sys-color-on-surface-variant);
+  padding: var(--spacing-xl);
+  font: var(--md-sys-typescale-body-medium);
+}
+
+/* Platform Switcher */
+.platform-switcher {
+  position: fixed;
+  bottom: 80px;
+  right: var(--spacing-lg);
+  background-color: var(--md-sys-color-surface);
+  border-radius: var(--md-sys-shape-corner-large);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: var(--spacing-sm);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.platform-switcher button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  font: var(--md-sys-typescale-label-medium);
+  cursor: pointer;
+  border-radius: var(--md-sys-shape-corner-small);
+  transition: all 0.2s ease;
+}
+
+.platform-switcher button:hover {
+  background-color: var(--md-sys-color-surface-container-high);
+}
+
+.platform-switcher button.active {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+}
