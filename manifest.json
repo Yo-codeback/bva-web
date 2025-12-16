@@ -3,18 +3,18 @@
   "short_name": "農產分析",
   "description": "快速查詢與分析農產品價格趨勢，協助您做出更好的交易決策",
   "version": "3.0.0",
-  "start_url": "/bva-web/",
+  "start_url": "/",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#6750A4",
   "background_color": "#FEF7FF",
-  "scope": "/bva-web/",
+  "scope": "/",
   "lang": "zh-TW",
   "dir": "ltr",
   "categories": ["productivity", "business", "finance"],
   "screenshots": [
     {
-      "src": "WEB/image/png/icon-512.png",
+      "src": "image/png/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "wide"
@@ -22,18 +22,18 @@
   ],
   "icons": [
     {
-      "src": "WEB/image/png/favicon.ico",
+      "src": "image/png/favicon.ico",
       "sizes": "16x16 32x32",
       "type": "image/x-icon"
     },
     {
-      "src": "WEB/image/png/icon-192.png",
+      "src": "image/png/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "WEB/image/png/icon-512.png",
+      "src": "image/png/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -54,7 +54,7 @@
       "url": "/?view=trend",
       "icons": [
         {
-          "src": "WEB/image/png/icon-192.png",
+          "src": "image/png/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -67,7 +67,7 @@
       "url": "/?view=volume",
       "icons": [
         {
-          "src": "WEB/image/png/icon-192.png",
+          "src": "image/png/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
@@ -80,7 +80,7 @@
       "url": "/?view=search",
       "icons": [
         {
-          "src": "WEB/image/png/icon-192.png",
+          "src": "image/png/icon-192.png",
           "sizes": "192x192",
           "type": "image/png"
         }
