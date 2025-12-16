@@ -5,12 +5,14 @@ const ENV_CONFIG = {
   dev: {
     apiBaseUrl: 'http://hk-a.nothingh.com:40004', // 或開發環境 API
     enableDevTools: true,
-    showDebugInfo: true
+    showDebugInfo: true,
+    enableLayoutFeatures: true // 啟用佈局實驗功能
   },
   github: {
     apiBaseUrl: 'http://hk-a.nothingh.com:40004',
     enableDevTools: false,
-    showDebugInfo: false
+    showDebugInfo: false,
+    enableLayoutFeatures: false // 正式環境也啟用佈局實驗功能
   }
 };
 

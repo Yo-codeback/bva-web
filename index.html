@@ -43,7 +43,11 @@
         <!-- Main Content -->
         <main class="main-content">
             <!-- Control Section -->
-            <section class="control-section">
+            <section class="control-section" id="controlSection">
+                <!-- 側邊欄收合按鈕 (僅在桌面端顯示) -->
+                <button id="sidebarToggle" class="sidebar-toggle" title="收合/展開側邊欄" style="display: none;">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
                 <div class="section-card">
                     <div class="card-header">
                         <span class="material-symbols-outlined">search</span>
@@ -96,7 +100,7 @@
                             <span>交易量分布</span>
                         </button>
                         <button id="showPriceDist" class="analysis-btn secondary">
-                            <span class="material-symbols-outlined">histogram</span>
+                            <span class="material-symbols-outlined">assessment</span>
                             <span>價格分布</span>
                         </button>
                         <button id="showSeasonal" class="analysis-btn secondary">
@@ -138,19 +142,8 @@
                     <p class="loading-text">資料載入中...</p>
                 </div>
 
-                <!-- Chart Area -->
-                <div class="section-card chart-container">
-                    <div id="chartArea" class="chart-area">
-                        <div class="empty-state">
-                            <span class="material-symbols-outlined">show_chart</span>
-                            <h3>開始分析</h3>
-                            <p>請選擇作物以查看分析結果</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Statistics Cards -->
-                <div class="stats-container">
+                <!-- Statistics Cards (手機端顯示在最上方) -->
+                <div class="stats-container" id="statsContainer">
                     <div class="stats-header">
                         <span class="material-symbols-outlined">monitoring</span>
                         <h3>統計資料</h3>
@@ -202,8 +195,31 @@
                     </div>
                 </div>
 
+                <!-- Mobile Tab Navigation (僅在手機端顯示，位於圖表/表格上方) -->
+                <div class="mobile-tab-nav" id="mobileTabNav">
+                    <button class="mobile-tab-btn active" data-tab="chart">
+                        <span class="material-symbols-outlined">show_chart</span>
+                        <span>圖表</span>
+                    </button>
+                    <button class="mobile-tab-btn" data-tab="table">
+                        <span class="material-symbols-outlined">table_rows</span>
+                        <span>表格</span>
+                    </button>
+                </div>
+
+                <!-- Chart Area -->
+                <div class="section-card chart-container mobile-tab-content active" data-tab-content="chart">
+                    <div id="chartArea" class="chart-area">
+                        <div class="empty-state">
+                            <span class="material-symbols-outlined">show_chart</span>
+                            <h3>開始分析</h3>
+                            <p>請選擇作物以查看分析結果</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Data Table -->
-                <div class="section-card table-container">
+                <div class="section-card table-container mobile-tab-content" data-tab-content="table">
                     <div class="card-header">
                         <span class="material-symbols-outlined">table_rows</span>
                         <h3>詳細資料</h3>
@@ -284,17 +300,130 @@
         </div>
     </div>
 
-    <!-- 根據環境載入開發者工具 -->
+    <!-- 根據環境載入開發者工具和佈局功能 -->
     <script>
         // 等待 config.js 載入完成
-        if (typeof CURRENT_CONFIG !== 'undefined' && CURRENT_CONFIG.enableDevTools) {
-            const devToolsScript = document.createElement('script');
-            devToolsScript.src = 'dev-tools.js';
-            document.head.appendChild(devToolsScript);
+        if (typeof CURRENT_CONFIG !== 'undefined') {
+            // 載入佈局實驗功能（如果啟用）
+            if (CURRENT_CONFIG.enableLayoutFeatures) {
+                const layoutFeaturesScript = document.createElement('script');
+                layoutFeaturesScript.src = 'layout-features.js';
+                layoutFeaturesScript.onload = () => {
+                    // 如果沒有開發者工具，直接初始化佈局功能
+                    if (typeof window.LayoutFeatures !== 'undefined' && !CURRENT_CONFIG.enableDevTools) {
+                        // 從 localStorage 讀取已保存的佈局狀態並應用
+                        const savedLayoutState = localStorage.getItem('dev_new_layout_enabled') === 'true';
+                        const savedCompactStats = localStorage.getItem('dev_compact_stats_enabled') === 'true';
+                        const savedSideBySide = localStorage.getItem('dev_chart_table_side_by_side') === 'true';
+                        
+                        if (savedLayoutState) {
+                            document.body.classList.add('new-layout-enabled');
+                            setTimeout(() => {
+                                if (window.LayoutFeatures.initSidebar) {
+                                    window.LayoutFeatures.initSidebar();
+                                }
+                            }, 100);
+                        }
+                        if (savedCompactStats) {
+                            document.body.classList.add('compact-stats-enabled');
+                        }
+                        if (savedSideBySide) {
+                            document.body.classList.add('chart-table-side-by-side');
+                        }
+                    }
+                };
+                document.head.appendChild(layoutFeaturesScript);
+            }
+            
+            // 載入開發者工具（如果啟用）
+            if (CURRENT_CONFIG.enableDevTools) {
+                const devToolsScript = document.createElement('script');
+                devToolsScript.src = 'dev-tools.js';
+                devToolsScript.onload = () => {
+                    // 開發者工具載入完成後，初始化佈局功能
+                    if (typeof window.LayoutFeatures !== 'undefined') {
+                        window.LayoutFeatures.init();
+                    }
+                };
+                document.head.appendChild(devToolsScript);
+            }
         }
     </script>
     <script src="script.js"></script>
     <script>
+        // 手機端 Tab 切換功能
+        document.addEventListener('DOMContentLoaded', () => {
+            const mobileTabNav = document.getElementById('mobileTabNav');
+            const mobileTabBtns = document.querySelectorAll('.mobile-tab-btn');
+            const mobileTabContents = document.querySelectorAll('.mobile-tab-content');
+            
+            if (mobileTabNav && mobileTabBtns.length > 0) {
+                mobileTabBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const targetTab = btn.dataset.tab;
+                        
+                        // 更新按鈕狀態
+                        mobileTabBtns.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        // 更新內容顯示
+                        mobileTabContents.forEach(content => {
+                            if (content.dataset.tabContent === targetTab) {
+                                content.classList.add('active');
+                            } else {
+                                content.classList.remove('active');
+                            }
+                        });
+                        
+                        // 儲存選擇
+                        localStorage.setItem('mobile_active_tab', targetTab);
+                    });
+                });
+                
+                // 從 localStorage 恢復選擇
+                const savedTab = localStorage.getItem('mobile_active_tab');
+                if (savedTab === 'table' || savedTab === 'chart') {
+                    const savedBtn = document.querySelector(`[data-tab="${savedTab}"]`);
+                    if (savedBtn) {
+                        savedBtn.click();
+                    }
+                }
+            }
+        });
+        
+        // 側邊欄收合功能（開發版本）
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const controlSection = document.getElementById('controlSection');
+            
+            if (sidebarToggle && controlSection) {
+                // 檢查是否啟用新佈局
+                const isNewLayoutEnabled = document.body.classList.contains('new-layout-enabled');
+                
+                if (isNewLayoutEnabled) {
+                    sidebarToggle.style.display = 'flex';
+                    
+                    // 從 localStorage 讀取收合狀態
+                    const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+                    if (isCollapsed) {
+                        controlSection.classList.add('collapsed');
+                    }
+                    
+                    sidebarToggle.addEventListener('click', () => {
+                        controlSection.classList.toggle('collapsed');
+                        const isNowCollapsed = controlSection.classList.contains('collapsed');
+                        localStorage.setItem('sidebar_collapsed', isNowCollapsed.toString());
+                        
+                        // 更新圖示
+                        const icon = sidebarToggle.querySelector('.material-symbols-outlined');
+                        if (icon) {
+                            icon.textContent = isNowCollapsed ? 'menu_open' : 'menu';
+                        }
+                    });
+                }
+            }
+        });
+        
         // 平台切換器功能
         document.addEventListener('DOMContentLoaded', () => {
             const platformSwitcherToggle = document.getElementById('platformSwitcherToggle');

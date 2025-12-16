@@ -72,6 +72,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* App Bar */
@@ -127,6 +130,15 @@ body {
   grid-template-columns: 350px 1fr;
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
+}
+
+/* 手機端 Tab 導航（預設隱藏，僅在手機端顯示） */
+.mobile-tab-nav {
+  display: none;
+}
+
+.mobile-tab-content {
+  /* 桌面端：所有內容都顯示 */
 }
 
 /* Control Section */
@@ -472,21 +484,26 @@ body {
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 14px; /* 從 12px 增大到 14px */
   color: var(--neutral-text-tertiary);
   margin-bottom: 4px;
+  white-space: nowrap; /* 防止換行 */
 }
 
 .stat-value {
-  font-size: 20px;
+  font-size: 24px; /* 從 20px 增大到 24px */
   font-weight: 600;
   color: var(--neutral-text-primary);
   margin-bottom: 4px;
+  white-space: nowrap; /* 防止換行 */
+  overflow: hidden;
+  text-overflow: ellipsis; /* 如果太長顯示省略號 */
 }
 
 .stat-unit {
-  font-size: 12px;
+  font-size: 14px; /* 從 12px 增大到 14px */
   color: var(--neutral-text-tertiary);
+  white-space: nowrap; /* 防止換行 */
 }
 
 /* Data Table */
@@ -627,6 +644,10 @@ body {
     grid-template-columns: 1fr;
     gap: var(--spacing-md);
     padding: var(--spacing-md);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
   .control-section {
@@ -635,6 +656,119 @@ body {
 
   .display-section {
     order: 2;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  /* 統計資料顯示在最上方 */
+  .stats-container {
+    order: 1 !important; /* 強制確保順序 */
+    margin-bottom: var(--spacing-md);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* 手機端 Tab 導航（位於圖表/表格上方） */
+  .mobile-tab-nav {
+    display: flex;
+    background-color: var(--neutral-bg-elevated);
+    border-radius: var(--neutral-radius-lg);
+    padding: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-xs);
+    order: 2 !important; /* 強制確保順序 */
+    box-shadow: var(--neutral-shadow-md);
+    border: 1px solid var(--neutral-border);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobile-tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: var(--spacing-sm);
+    border: none;
+    background-color: transparent;
+    color: var(--neutral-text-secondary);
+    border-radius: var(--neutral-radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    touch-action: manipulation;
+    min-height: 56px;
+  }
+
+  .mobile-tab-btn .material-symbols-outlined {
+    font-size: 24px;
+  }
+
+  .mobile-tab-btn span:not(.material-symbols-outlined) {
+    font-size: 12px;
+  }
+
+  .mobile-tab-btn.active {
+    background-color: var(--neutral-primary);
+    color: white;
+  }
+
+  .mobile-tab-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* 手機端 Tab 內容切換 */
+  .mobile-tab-content {
+    display: none;
+    order: 3 !important; /* 強制確保順序 */
+    flex: 1;
+    min-height: 0; /* 允許 flex 子元素縮小 */
+  }
+
+  .mobile-tab-content.active {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* 圖表和表格容器在手機端佔滿可用空間 */
+  .mobile-tab-content.chart-container,
+  .mobile-tab-content.table-container {
+    flex: 1;
+    min-height: 500px; /* 確保有足夠的顯示空間 */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  .mobile-tab-content.chart-container.active {
+    display: flex;
+  }
+
+  .mobile-tab-content.table-container.active {
+    display: flex;
+  }
+
+  .mobile-tab-content .chart-area {
+    flex: 1;
+    min-height: 450px;
+  }
+
+  .mobile-tab-content .table-wrapper {
+    flex: 1;
+    min-height: 450px;
+    overflow-y: auto;
   }
 
   .analysis-grid {
@@ -665,9 +799,33 @@ body {
     grid-template-columns: 1fr;
   }
 
+  /* 桌面端保持原有樣式 */
+  .table-container:not(.mobile-tab-content) {
+    min-height: 400px;
+  }
+
+  .table-wrapper {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 手機端表格容器 */
+  .mobile-tab-content .table-wrapper {
+    max-height: none; /* 移除最大高度限制，讓 flex 控制 */
+    overflow-x: auto; /* 允許表格內部滾動 */
+  }
+
+  .main-content {
+    padding-bottom: calc(var(--spacing-md) + 60px); /* 為底部 Tab 留空間 */
+  }
+
   .fab {
-    bottom: var(--spacing-md);
+    bottom: calc(var(--spacing-md) + 60px); /* 在 Tab 上方 */
     right: var(--spacing-md);
+  }
+
+  /* 確保圖表和表格在手機端不會同時顯示 */
+  .mobile-tab-content:not(.active) {
+    display: none !important;
   }
 }
 
@@ -866,6 +1024,186 @@ body {
 .platform-switcher button.active {
   background-color: rgba(37, 99, 235, 0.1);
   color: var(--neutral-primary);
+}
+
+/* ============================================
+   開發版本：新佈局實驗功能
+   ============================================ */
+
+/* 新佈局：可收合側邊欄 */
+.new-layout-enabled .control-section {
+  position: relative;
+  min-width: 350px;
+  transition: min-width 0.3s ease, opacity 0.3s ease;
+}
+
+.new-layout-enabled .control-section.collapsed {
+  min-width: 60px;
+  width: 60px;
+  overflow: visible;
+}
+
+.new-layout-enabled .control-section.collapsed .section-card {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.new-layout-enabled .sidebar-toggle {
+  display: flex !important;
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--neutral-primary);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  box-shadow: var(--neutral-shadow-lg);
+  transition: all 0.2s ease;
+}
+
+.new-layout-enabled .sidebar-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -4px rgba(37, 99, 235, 0.4);
+}
+
+.new-layout-enabled .sidebar-toggle:active {
+  transform: translateY(0);
+}
+
+.new-layout-enabled .sidebar-toggle .material-symbols-outlined {
+  font-size: 24px;
+}
+
+.new-layout-enabled .control-section.collapsed .sidebar-toggle {
+  right: 10px;
+}
+
+/* 新佈局：統計卡片移到圖表上方 */
+.new-layout-enabled .display-section {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .new-layout-enabled .stats-container {
+    /* 只在桌面端把統計卡片移到圖表上方 */
+    order: -1;
+    margin-bottom: var(--spacing-lg);
+  }
+}
+
+/* 手機端：確保即使啟用新佈局，順序也正確 */
+@media (max-width: 768px) {
+  .new-layout-enabled .stats-container {
+    order: 1 !important;
+  }
+
+  .new-layout-enabled .mobile-tab-nav {
+    order: 2 !important;
+  }
+
+  .new-layout-enabled .mobile-tab-content {
+    order: 3 !important;
+  }
+}
+
+/* 當啟用圖表表格並排時，覆蓋 flex 佈局 */
+.chart-table-side-by-side .display-section {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+/* 緊湊統計卡片：橫向排列 */
+.compact-stats-enabled .stats-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--spacing-sm);
+}
+
+.compact-stats-enabled .stat-card {
+  flex-direction: column;
+  text-align: center;
+  padding: var(--spacing-sm);
+  min-height: auto;
+}
+
+.compact-stats-enabled .stat-icon {
+  margin: 0 auto var(--spacing-xs);
+  width: 40px;
+  height: 40px;
+}
+
+.compact-stats-enabled .stat-value {
+  font-size: 18px;
+}
+
+.compact-stats-enabled .stat-label,
+.compact-stats-enabled .stat-unit {
+  font-size: 11px;
+}
+
+/* 圖表與表格並排顯示（大螢幕） */
+@media (min-width: 1200px) {
+  .chart-table-side-by-side .display-section {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    align-items: start;
+  }
+  
+  .chart-table-side-by-side .chart-container {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  
+  .chart-table-side-by-side .table-container {
+    grid-column: 2;
+    grid-row: 2;
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  
+  .chart-table-side-by-side .stats-container {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    order: 0 !important;
+    margin-bottom: var(--spacing-lg);
+  }
+  
+  .chart-table-side-by-side .result-container {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+  
+  .chart-table-side-by-side .loading-container {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 769px) {
+  .new-layout-enabled .control-section {
+    min-width: 350px;
+  }
+  
+  .new-layout-enabled .control-section.collapsed {
+    min-width: 60px;
+    width: 60px;
+  }
+  
+  .new-layout-enabled .main-content {
+    grid-template-columns: 350px 1fr;
+  }
 }
 
 /* Developer Tools Styles */
