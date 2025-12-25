@@ -9,7 +9,7 @@ const ENV_CONFIG = {
     enableLayoutFeatures: true // 啟用佈局實驗功能
   },
   github: {
-    apiBaseUrl: 'http://hk-a.nothingh.com:40004',
+    apiBaseUrl: 'https://ecdb7429.nhnet.dev/',
     enableDevTools: false,
     showDebugInfo: false,
     enableLayoutFeatures: false // 正式環境也啟用佈局實驗功能
