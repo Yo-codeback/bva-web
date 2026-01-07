@@ -9,7 +9,7 @@ console.log(`農產品交易分析系統 ${VERSION} - ${RELEASE_DATE}`);
 
 // API 端點 - 從 config.js 讀取
 // 如果 config.js 尚未載入，使用預設值
-let API_BASE_URL = 'http://hk-a.nothingh.com:40004';
+let API_BASE_URL = 'https://ecdb7429.nhnet.dev/';
 if (typeof CURRENT_CONFIG !== 'undefined' && CURRENT_CONFIG.apiBaseUrl) {
   API_BASE_URL = CURRENT_CONFIG.apiBaseUrl;
   console.log(`使用環境配置 API: ${API_BASE_URL}`);
