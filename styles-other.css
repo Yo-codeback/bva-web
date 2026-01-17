@@ -57,8 +57,9 @@
 }
 
 body {
-  font-family: var(--neutral-font-family);
+  font-family: 'Noto Serif TC', var(--neutral-font-family);
   font-size: 16px;
+  font-weight: 500;
   line-height: 1.5;
   background-color: var(--neutral-bg-secondary);
   color: var(--neutral-text-primary);

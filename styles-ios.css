@@ -59,8 +59,9 @@
 }
 
 body {
-  font-family: var(--ios-font-body);
+  font-family: 'Noto Serif TC', var(--ios-font-body);
   font-size: 17px;
+  font-weight: 500;
   line-height: 1.47059;
   background-color: var(--ios-bg-grouped);
   color: var(--ios-text-primary);

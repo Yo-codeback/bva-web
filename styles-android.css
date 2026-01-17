@@ -87,6 +87,8 @@
 
 body {
   font: var(--md-sys-typescale-body-medium);
+  font-family: 'Noto Serif TC', 'Roboto', sans-serif;
+  font-weight: 500;
   background-color: var(--md-sys-color-surface);
   color: var(--md-sys-color-on-surface);
   line-height: 1.5;
