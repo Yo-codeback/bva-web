@@ -129,6 +129,7 @@ body {
 
 .app-title {
   font: var(--md-sys-typescale-headline-medium);
+  font-size: 90px;
   color: var(--md-sys-color-primary);
   margin: 0;
 }
